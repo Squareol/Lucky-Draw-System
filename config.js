@@ -6,8 +6,8 @@
    see sql/README.md before you create any new table.
    --------------------------------------------------------------------------- */
 window.XF = {
-  SUPABASE_URL:  'PUT YOUR SUPABASE URL HERE',
-  SUPABASE_KEY:  'PUT YOUR ANON KEY HERE',
+  SUPABASE_URL:  'https://ouzrabdgjkmonfpavpzt.supabase.co',
+  SUPABASE_KEY:  'sb_publishable_RNW-pHGjMGT-ghbj8N3kyA__6yCO7Dr',
 
   /* Countdown target only. The pool lock time lives in Supabase
      app_config.pool_locks_at — that is the single source of truth, and
