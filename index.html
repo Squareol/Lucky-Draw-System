@@ -17,6 +17,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
 <script src="assets/qrcode-1.0.0.min.js" defer></script>
+<!-- QM5FXpju4gN23Krg   Booth/entrance self-scan: reuses the same local scanner library admin.html
+     already ships with. No CDN — keeps script-src 'self' in the CSP intact. -->
+<script src="assets/html5-qrcode-2.3.8.min.js" defer></script>
 <style>
 /* ---- iOS FOCUS-ZOOM FLOOR ----------------------------------------------
    Safari on iOS zooms the whole page whenever a focused form control renders
@@ -503,6 +506,12 @@ body.rehearsing .shalo{background:conic-gradient(from 0deg, transparent 0deg, rg
 
 /* streak */
 .streak{background:var(--navy); border:1px solid var(--line); border-radius:16px; padding:16px;}
+.scancard{background:var(--navy); border:1px solid var(--line); border-radius:16px; padding:16px;}
+.scandesc{font-size:11px; color:var(--dim); line-height:1.6; margin:9px 0 13px;}
+.scanrow{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--line); font-size:11px;}
+.scanrow:first-child{border-top:0;}
+.scanrow b{color:var(--gold); font:700 10.5px 'JetBrains Mono'; min-width:78px;}
+.scanrow span{color:var(--dim);}
 .shead{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
 .shead b{font:700 11px 'JetBrains Mono','Noto Sans SC'; letter-spacing:.24em; color:var(--gold);}
 .shead span{font:600 9.5px 'JetBrains Mono','Noto Sans SC'; color:var(--dim); letter-spacing:.04em; text-align:right;}
@@ -893,7 +902,7 @@ footer{margin-top:32px; text-align:center; font:500 9px 'JetBrains Mono'; color:
   <div class="top">
     <div class="brand"><img class="mark" src="assets/logo.png" alt=""><img class="wm" src="assets/wordmark.png" alt="X FITNESS"></div>
     <div class="langs">
-      <button class="on" data-lang="en">EN</button><button data-lang="zh">中文</button><button data-lang="ms">BM</button>
+      <button data-lang="en">EN</button><button class="on" data-lang="zh">中文</button><button data-lang="ms">BM</button>
     </div>
   </div>
 
@@ -1217,6 +1226,16 @@ footer{margin-top:32px; text-align:center; font:500 9px 'JetBrains Mono'; color:
     </div>
 
     <div class="section">
+      <div class="scancard">
+        <div class="shead"><b data-i18n="scT">SCAN TO EARN</b><span data-i18n="scS">booths &amp; entrance · +tickets instantly</span></div>
+        <p class="scandesc" data-i18n="scDesc">Open this at the entrance or any booth and scan its QR. Each spot can be scanned again the next day.</p>
+        <button class="bgold" style="width:100%" onclick="openScanModal()" data-i18n="scBtn">📷 Scan a QR code</button>
+        <div class="sfoot"><b id="scanTotal">0</b><span data-i18n="scFoot">tickets earned from scans so far</span></div>
+        <div class="lst" id="scanHist" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="streak">
         <div class="shead"><b data-i18n="streakT">COME TRAIN</b><span data-i18n="streakS">+3 / day · 25–31 AUG</span></div>
         <div class="dots" id="streakDots"></div>
@@ -1383,6 +1402,9 @@ footer{margin-top:32px; text-align:center; font:500 9px 'JetBrains Mono'; color:
     <div class="exrow"><div class="exi">📣</div>
       <div><h5 data-i18n="r4h">Story repost mission</h5><p data-i18n="r4p">Tag 3 friends under our 9.01 post + repost to your story. Instant. Checked against your handle when you claim a prize.</p></div>
       <div class="expts" data-i18n="r4b">+6</div></div>
+    <div class="exrow"><div class="exi">📷</div>
+      <div><h5 data-i18n="rSh">Scan booths &amp; entrance</h5><p data-i18n="rSp">Scan the QR at the entrance or at any booth with your own phone. Once per spot per day.</p></div>
+      <div class="expts" data-i18n="rSb">varies</div></div>
     <div class="nightly"><span>⚡</span><p data-i18n="rNote">Every ticket lands instantly. Keep your tag and story up until 1 Sept — we check it when prizes are claimed.</p></div>
     <button class="bline" style="margin-top:16px; width:100%" onclick="closeModal('rulesModal')" data-i18n="close">CLOSE</button>
   </div>
@@ -1420,6 +1442,21 @@ footer{margin-top:32px; text-align:center; font:500 9px 'JetBrains Mono'; color:
     <div class="sub" data-i18n="qrmS">Show this at the front desk · turn your brightness up</div>
     <div class="priv" data-i18n="qrmP">This code contains your member code only — never your IC number.</div>
     <button onclick="closeModal('qrModal')" data-i18n="close">CLOSE</button>
+  </div>
+</div>
+
+<!-- booth / entrance self-scan -->
+<div class="overlay" id="scanModal" onclick="if(event.target===this)stopScanModal()">
+  <div class="sheet">
+    <div class="grab"></div>
+    <h3 data-i18n="scMT">SCAN A QR CODE</h3>
+    <div id="scanReader" style="width:100%; max-width:320px; margin:10px auto 0; border-radius:12px; overflow:hidden; background:#000;"></div>
+    <div id="scanRes" style="margin-top:12px; min-height:20px; font-size:12px; color:var(--dim); text-align:center;"></div>
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <input id="scanManual" data-i18n-ph="scPh" placeholder="Or type the code shown under the QR" style="flex:1; padding:11px; border-radius:10px; border:1px solid var(--line); background:transparent; color:inherit; font-size:12px;">
+      <button class="bline" onclick="scanManualSubmit()" style="width:auto; padding:11px 16px;" data-i18n="go">GO</button>
+    </div>
+    <button class="bline" style="margin-top:16px; width:100%" onclick="stopScanModal()" data-i18n="close">CLOSE</button>
   </div>
 </div>
 
@@ -1470,6 +1507,95 @@ function buildWeekSheet(){
   paintWeek(true);
 }
 function closeModal(id){ $(id).classList.remove('show'); document.body.style.overflow=''; }
+
+/* ========== booth / entrance self-scan ========== */
+let SCAN_H5 = null, SCAN_LAST_CODE = '', SCAN_LAST_AT = 0, SCAN_BUSY = false;
+
+function openScanModal(){
+  openModal('scanModal');
+  $('scanRes').textContent = '';
+  startScanCam();
+}
+function stopScanModal(){
+  closeModal('scanModal');
+  stopScanCam();
+}
+async function startScanCam(){
+  if (typeof Html5Qrcode === 'undefined'){
+    $('scanRes').textContent = T('scNoLib');
+    return;
+  }
+  try {
+    SCAN_H5 = new Html5Qrcode('scanReader');
+    await SCAN_H5.start(
+      {facingMode: 'environment'},
+      {fps:10, qrbox:(w,h)=>{ const m = Math.floor(Math.min(w,h)*.72); return {width:m,height:m}; }},
+      (text) => {
+        const now = Date.now();
+        if (text === SCAN_LAST_CODE && now - SCAN_LAST_AT < 3000) return; // debounce repeat reads
+        SCAN_LAST_CODE = text; SCAN_LAST_AT = now;
+        submitScan(text);
+      },
+      () => {} // per-frame "nothing found" — ignore
+    );
+  } catch (e){
+    $('scanRes').textContent = T('scNoCam');
+  }
+}
+function stopScanCam(){
+  if (SCAN_H5){
+    try { SCAN_H5.stop().then(() => SCAN_H5.clear()).catch(()=>{}); } catch (e) {}
+    SCAN_H5 = null;
+  }
+  const rd = $('scanReader'); if (rd) rd.innerHTML = '';
+}
+function scanManualSubmit(){
+  const v = $('scanManual').value.trim();
+  if (!v) return;
+  $('scanManual').value = '';
+  submitScan(v);
+}
+async function submitScan(rawCode){
+  if (SCAN_BUSY || !IC) return;
+  SCAN_BUSY = true;
+  $('scanRes').textContent = T('scChk');
+  try {
+    const r = await rpc('xf_scan', {p_ic: IC, p_code: rawCode});
+    if (!r.ok){
+      if (r.error === 'already_today'){
+        $('scanRes').textContent = T('scDone').replace('{p}', r.label || '');
+      } else if (r.error === 'bad_code'){
+        $('scanRes').textContent = T('scBad');
+      } else if (r.error === 'closed'){
+        $('scanRes').textContent = T('scClosed');
+      } else {
+        $('scanRes').textContent = T('scErr') + ' (' + (r.error||'error') + ')';
+      }
+      return;
+    }
+    ME = r; renderMe();
+    /* NB: {q} not {n} — T() reserves {c}{m}{s}{r}{n} for the points tokens
+       and would rewrite {n} into the renewal value before we got here. */
+    $('scanRes').textContent = '✓ ' + T('scOk')
+      .replace('{q}', r.scan_points||0).replace('{p}', r.scanned||'');
+    toast(T('scToast').replace('{p}', r.scanned||''));
+    setTimeout(() => { if ($('scanModal').classList.contains('show')) stopScanCam(); }, 400);
+  } catch (e){
+    $('scanRes').textContent = T('netErr');
+  } finally {
+    SCAN_BUSY = false;
+  }
+}
+function renderScanSummary(){
+  if (!ME || !ME.ok) return;
+  $('scanTotal').textContent = (ME.tickets && ME.tickets.scan) || 0;
+  const list = ME.scans || [];
+  const box = $('scanHist');
+  if (!list.length){ box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = list.slice(0, 8).map(s =>
+    '<div class="scanrow"><b>' + esc(s.label) + '</b><span>' + esc(s.at) + '</span></div>').join('');
+}
 
 /* ========== i18n ========== */
 const I18N = {
@@ -1594,6 +1720,20 @@ en:{
  errExists:'This IC is already registered. Use "Log in" instead.',
  errBusy:'Too many sign-ups from this connection just now. Please wait a minute and try again.',
  errNotFound:'We could not find that IC. Please register first.',
+ /* --- booth / entrance self-scan --- */
+ scT:'SCAN TO EARN', scS:'booths & entrance · +tickets instantly',
+ scDesc:'Open this at the entrance or any booth and scan its QR. Each spot can be scanned again the next day.',
+ scBtn:'📷 Scan a QR code', scFoot:'tickets earned from scans so far',
+ go:'GO', scMT:'SCAN A QR CODE', scPh:'Or type the code shown under the QR',
+ scChk:'Checking…',
+ scOk:'+{q} tickets — {p}!', scToast:'Ticket added — {p}',
+ scDone:'{p} already scanned today — come back tomorrow for another ticket.',
+ scBad:"That code isn't recognised — make sure you're scanning an event QR.",
+ scClosed:'Ticket earning has closed for this event.',
+ scErr:'Could not record that scan.',
+ scNoLib:'Camera scanner did not load — type the code below instead.',
+ scNoCam:'Could not open the camera — check camera permission, or type the code below instead.',
+ rSh:'Scan booths & entrance', rSp:'Scan the QR at the entrance or at any booth with your own phone. Once per spot per day.', rSb:'varies',
  errGeneric:'Something went wrong. Please try again.'
 },
 zh:{
@@ -1716,6 +1856,20 @@ zh:{
  errExists:'这个 IC 已经登记过了，请用「登入」。',
  errBusy:'这个网络刚才登记太频繁了，请等一分钟再试。',
  errNotFound:'找不到这个 IC，请先登记。',
+ /* --- 摊位 / 入口自助扫码 --- */
+ scT:'扫码赚取', scS:'摊位与入口 · 即时获得抽奖券',
+ scDesc:'在入口或任何摊位打开此页面并扫描该处的二维码。每个地点每天可扫描一次，隔天可再扫。',
+ scBtn:'📷 扫描二维码', scFoot:'已通过扫码获得的抽奖券',
+ go:'确定', scMT:'扫描二维码', scPh:'或输入二维码下方的代码',
+ scChk:'验证中…',
+ scOk:'+{q} 张抽奖券 — {p}！', scToast:'已添加抽奖券 — {p}',
+ scDone:'{p} 今天已扫描过，明天再来可再获得一张。',
+ scBad:'无法识别此代码，请确认扫描的是本活动的二维码。',
+ scClosed:'本活动的抽奖券获取已截止。',
+ scErr:'无法记录此次扫描。',
+ scNoLib:'扫描功能未能加载，请改用下方输入代码。',
+ scNoCam:'无法开启相机，请检查相机权限，或改用下方输入代码。',
+ rSh:'扫描摊位与入口', rSp:'用自己的手机扫描入口或任何摊位的二维码。每个地点每天一次。', rSb:'不等',
  errGeneric:'出了点问题，请再试一次。'
 },
 ms:{
@@ -1838,9 +1992,23 @@ ms:{
  errExists:'IC ini sudah didaftarkan. Sila guna "Log masuk".',
  errBusy:'Terlalu banyak pendaftaran dari sambungan ini. Tunggu seminit dan cuba lagi.',
  errNotFound:'IC tidak dijumpai. Sila daftar dahulu.',
+ /* --- imbas gerai / pintu masuk --- */
+ scT:'IMBAS UNTUK TIKET', scS:'gerai & pintu masuk · tiket serta-merta',
+ scDesc:'Buka ini di pintu masuk atau mana-mana gerai dan imbas kod QR di situ. Setiap lokasi boleh diimbas sekali sehari.',
+ scBtn:'📷 Imbas kod QR', scFoot:'tiket diperoleh daripada imbasan setakat ini',
+ go:'HANTAR', scMT:'IMBAS KOD QR', scPh:'Atau taip kod di bawah QR itu',
+ scChk:'Menyemak…',
+ scOk:'+{q} tiket — {p}!', scToast:'Tiket ditambah — {p}',
+ scDone:'{p} sudah diimbas hari ini — datang semula esok untuk satu lagi tiket.',
+ scBad:'Kod itu tidak dikenali — pastikan anda mengimbas QR acara ini.',
+ scClosed:'Pengumpulan tiket untuk acara ini telah ditutup.',
+ scErr:'Imbasan itu tidak dapat direkodkan.',
+ scNoLib:'Pengimbas kamera gagal dimuatkan — taip kod di bawah.',
+ scNoCam:'Kamera tidak dapat dibuka — semak kebenaran kamera, atau taip kod di bawah.',
+ rSh:'Imbas gerai & pintu masuk', rSp:'Imbas QR di pintu masuk atau mana-mana gerai dengan telefon anda sendiri. Sekali setiap lokasi sehari.', rSb:'berbeza',
  errGeneric:'Ada masalah. Sila cuba lagi.'
 }};
-let LANG = localStorage.getItem('xf901_lang') || 'en';
+let LANG = localStorage.getItem('xf901_lang') || 'zh';   // default 中文
 /* Ticket values are fetched from the server (xf_points) so the copy can never
    promise a number the draw will not pay. config.js is only a fallback for the
    split second before that call returns, or if it fails. */
@@ -1876,6 +2044,7 @@ async function loadPoints(){
 function applyLang(){
   document.documentElement.lang = LANG === 'zh' ? 'zh' : (LANG === 'ms' ? 'ms' : 'en');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = T(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = T(el.dataset.i18nPh); });
   document.querySelectorAll('.langs button').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
   if (ME && ME.ok) renderMe();
   paintWeek(true);          // the pills are computed, applyLang would blank them
@@ -2211,6 +2380,7 @@ const todayMYT = () => new Intl.DateTimeFormat('en-CA',
 
 function renderMe(){
   if (!ME || !ME.ok) return;
+  renderScanSummary();
   const t = ME.tickets || {};
   $('tTotal').textContent   = t.total   || 0;
   $('tCheckin').textContent = t.checkin || 0;
