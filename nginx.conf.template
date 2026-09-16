@@ -1,0 +1,34 @@
+server {
+    listen ${PORT};
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # --- clean URLs, matching vercel.json's "cleanUrls": true -------------
+    # so /admin works the same as /admin.html
+    location / {
+        try_files $uri $uri.html $uri/ =404;
+    }
+
+    # --- long cache for hashed/static assets -------------------------------
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+    }
+
+    # --- keep the admin console out of search engines ----------------------
+    location = /admin {
+        add_header X-Robots-Tag "noindex, nofollow" always;
+        try_files /admin.html =404;
+    }
+
+    # --- security headers on every response ---------------------------------
+    # IMPORTANT: replace YOUR-PROJECT-REF below with your real Supabase
+    # project ref before deploying, exactly like vercel.json warns. Until you
+    # do, every API call will be silently blocked by this CSP.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), payment=()" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://YOUR-PROJECT-REF.supabase.co; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests" always;
+}
