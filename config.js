@@ -12,7 +12,7 @@ window.XF = {
   /* Countdown target only. The pool lock time lives in Supabase
      app_config.pool_locks_at — that is the single source of truth, and
      xf_pool_locked() is what actually stops entries. Set both. */
-  DRAW_AT: '2026-12-31T20:00:00+08:00',
+  DRAW_AT: '2026-12-13T23:00:00+08:00',
 
   TIMEZONE: 'Asia/Kuala_Lumpur',
 
@@ -20,12 +20,12 @@ window.XF = {
      the live status panel from these, so this is the only place dates are
      written down. Full ISO strings with your UTC offset. */
   CAMPAIGN: {
-    tickets_open:  '2026-12-25T00:00:00+08:00',
-    tickets_close: '2026-12-31T23:59:59+08:00',
-    promo_open:    '2026-12-30T00:00:00+08:00',
-    promo_close:   '2026-12-31T23:59:59+08:00',
-    draw_start:    '2026-12-31T20:00:00+08:00',
-    draw_end:      '2026-12-31T22:00:00+08:00'
+    tickets_open:  '2026-12-03T17:00:00+08:00',
+    tickets_close: '2026-12-13T22:59:00+08:00',
+    promo_open:    '2026-12-03T17:00:00+08:00',
+    promo_close:   '2026-12-13T22:59:00+08:00',
+    draw_start:    '2026-12-13T23:00:00+08:00',
+    draw_end:      '2026-12-13T23:30:00+08:00'
   },
 
   /* FALLBACK ONLY. The live values come from the server (xf_points) and are
