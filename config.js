@@ -20,9 +20,9 @@ window.XF = {
      the live status panel from these, so this is the only place dates are
      written down. Full ISO strings with your UTC offset. */
   CAMPAIGN: {
-    tickets_open:  '2026-12-03T17:00:00+08:00',
+    tickets_open:  '2026-09-20T17:00:00+08:00',
     tickets_close: '2026-12-13T22:59:00+08:00',
-    promo_open:    '2026-12-03T17:00:00+08:00',
+    promo_open:    '2026-09-20T17:00:00+08:00',
     promo_close:   '2026-12-13T22:59:00+08:00',
     draw_start:    '2026-12-13T23:00:00+08:00',
     draw_end:      '2026-12-13T23:30:00+08:00'
