@@ -2256,14 +2256,16 @@ const PRIZE_IMG = {1:'assets/p1n.png', 2:'assets/p2.png', 3:'assets/p3n.png',
    PTS.max_days of these, so shortening max_days shortens the strip. */
 /* Every calendar date in the ticket window, derived from config rather than
    typed out, so moving the campaign is a one-line change in config.js. */
-const CAMPAIGN_DAYS = (() => {
-  const out = [], end = new Date(WKWIN.tix[1]);
-  for (let d = new Date(WKWIN.tix[0]); d <= end; d.setUTCDate(d.getUTCDate() + 1)){
-    out.push(new Intl.DateTimeFormat('en-CA',
-      {timeZone: (window.XF && window.XF.TIMEZONE) || 'Asia/Kuala_Lumpur'}).format(d));
-  }
-  return out;
-})();
+const CAMPAIGN_DAYS = (_CW.event_days && _CW.event_days.length)
+  ? _CW.event_days.slice()
+  : (() => {
+      const out = [], end = new Date(WKWIN.tix[1]);
+      for (let d = new Date(WKWIN.tix[0]); d <= end; d.setUTCDate(d.getUTCDate() + 1)){
+        out.push(new Intl.DateTimeFormat('en-CA',
+          {timeZone: (window.XF && window.XF.TIMEZONE) || 'Asia/Kuala_Lumpur'}).format(d));
+      }
+      return out;
+    })();
 const todayMYT = () => new Intl.DateTimeFormat('en-CA',
   {timeZone: (window.XF && window.XF.TIMEZONE) || 'Asia/Kuala_Lumpur'}).format(new Date());
 
