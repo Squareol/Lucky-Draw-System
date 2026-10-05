@@ -26,6 +26,12 @@ window.XF = {
     promo_close:   '2026-12-13T22:59:00+08:00',
     draw_start:    '2026-12-13T23:00:00+08:00',
     draw_end:      '2026-12-13T23:30:00+08:00'
+
+       // the streak card reads this list directly — only these 8 dates get a dot
+  event_days: [
+    '2026-12-03', '2026-12-04', '2026-12-05', '2026-12-06',
+    '2026-12-10', '2026-12-11', '2026-12-12', '2026-12-13'
+  ]
   },
 
   /* FALLBACK ONLY. The live values come from the server (xf_points) and are
