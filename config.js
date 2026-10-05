@@ -25,7 +25,7 @@ window.XF = {
     promo_open:    '2026-09-20T17:00:00+08:00',
     promo_close:   '2026-12-13T22:59:00+08:00',
     draw_start:    '2026-12-13T23:00:00+08:00',
-    draw_end:      '2026-12-13T23:30:00+08:00'
+    draw_end:      '2026-12-13T23:30:00+08:00',
 
        // the streak card reads this list directly — only these 8 dates get a dot
   event_days: [
