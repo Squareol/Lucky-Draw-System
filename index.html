@@ -2272,8 +2272,8 @@ function renderMe(){
   renderScanSummary();
   const t = ME.tickets || {};
   $('tTotal').textContent   = t.total   || 0;
-  $('tCheckin').textContent = t.checkin || 0;
-  $('tRenewal').textContent = t.renewal || 0;
+  $('tCheckin').textContent = t.scan_entrance || 0;
+  $('tRenewal').textContent = t.scan_booth    || 0;
   $('tSocial').textContent  = t.social  || 0;
   $('tRepost').textContent  = t.repost  || 0;
   /* v9.10 — a fifth chip so CHECK-IN + RENEWAL + SOCIAL + REPOST + ADJUSTED
@@ -2421,15 +2421,15 @@ const _openQR = openModal;
 openModal = function(id){ _openQR(id); if (id === 'qrModal') drawQR($('qrBig'), 224); };
 
 function renderStreak(){
-  const done = new Set(ME.checkin_dates || []);
+  const done = new Set(ME.entrance_dates || []);
   const today = todayMYT();
-  $('streakDots').innerHTML = CAMPAIGN_DAYS.slice(0, PTS.max_days).map(d => {
+  $('streakDots').innerHTML = CAMPAIGN_DAYS.map(d => {
     const isDone = done.has(d), isToday = d === today;
     return '<div class="dot ' + (isDone ? 'done' : '') + (isToday && !isDone ? ' today' : '') + '">' +
       '<div class="dcirc">' + Number(d.slice(8)) + '</div>' +
       '<em>' + (isDone ? '+' + PTS.checkin : (isToday ? T('todayLbl') : '')) + '</em></div>';
   }).join('');
-  $('streakStat').textContent = done.size + T('ofDays');
+  $('streakStat').textContent = done.size + ' / ' + CAMPAIGN_DAYS.length + ' ' + T('daysWord');
 }
 
 function renderBadges(){
