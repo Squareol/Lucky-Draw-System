@@ -45,10 +45,10 @@ window.XF = {
      so publishing the post needs no code push. */
 
   LINKS: {
-    instagram: 'https://www.instagram.com/YOUR_HANDLE',
-    facebook:  'https://www.facebook.com/YOUR_PAGE',
+    instagram: 'https://www.instagram.com/mj.squarebox',
+    facebook:  'https://www.facebook.com/MJSquareBox',
     tiktok:    'https://www.tiktok.com/@YOUR_HANDLE',
-    xhs:       'https://YOUR-REDNOTE-LINK',
+    xhs:       'https://xhslink.com/m/9WRWBIcAhGL',
     /* Google Review is no longer a ticket task — reviews must not be
        rewarded. Kept here only as the URL for a front-desk standee QR. */
     google:    'https://YOUR-GOOGLE-REVIEW-LINK'
